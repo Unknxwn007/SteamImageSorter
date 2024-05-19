@@ -32,8 +32,17 @@ for folder in os.listdir(directory):
                 new_folder_name = name.replace(':', ' ').replace('/', '_')
                 old_folder_path = os.path.join(directory, folder)
                 new_folder_path = os.path.join(directory, new_folder_name)
-                os.rename(old_folder_path, new_folder_path)
-                print(f"Renamed folder {folder} to {new_folder_name}")
+                if os.path.exists(new_folder_path):
+                    # Destination folder already exists, move files instead of renaming
+                    for filename in os.listdir(old_folder_path):
+                        src_file = os.path.join(old_folder_path, filename)
+                        dst_file = os.path.join(new_folder_path, filename)
+                        shutil.move(src_file, dst_file)
+                    shutil.rmtree(old_folder_path)
+                    print(f"Moved files from folder {folder} to {new_folder_name}")
+                else:
+                    os.rename(old_folder_path, new_folder_path)
+                    print(f"Renamed folder {folder} to {new_folder_name}")
             else:
                 print(f"Failed to retrieve game details for App ID: {app_id}")
                 print(data)  # Print API response for troubleshooting
